@@ -1,6 +1,7 @@
+import java.beans.JavaBean
+
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
@@ -10,11 +11,7 @@ repositories {
 
 dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
-}
-
-javafx {
-    version = "11.0.2"
-    modules = [ 'javafx.graphics', 'javafx.swing' ]
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 }
 
 jar {
@@ -28,3 +25,6 @@ jar {
 //}
 
 mainClassName = 'org.jackdotjs.Core'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11

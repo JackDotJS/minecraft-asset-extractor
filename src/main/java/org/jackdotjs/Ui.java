@@ -1,8 +1,5 @@
 package org.jackdotjs;
 
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.DirectoryChooser;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -16,6 +13,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.StringJoiner;
 
@@ -25,7 +23,7 @@ public class Ui {
   public static JTextField outputDirText = new JTextField();
   public static JButton inputDirSelect = new JButton("...");
   public static JButton outputDirSelect = new JButton("...");
-  public static JComboBox<String> versions = new JComboBox<>();
+  public static JComboBox<VersionItem> versions = new JComboBox<>();
   public static JButton start = new JButton("Start");
 
   private static String inputDirTextMemory;
@@ -33,6 +31,7 @@ public class Ui {
   private static File indexesDir;
 
   private static final Color invalidCol = new Color(255, 190, 190);
+  private static final Color warnCol = new Color(190, 190, 255);
   private static final JPanel windowWrapper = new JPanel(new BorderLayout());
   private static final JTextArea consoleText = new JTextArea();
   private static final JPopupMenu rc_edit = new JPopupMenu();
@@ -59,40 +58,34 @@ public class Ui {
   }
 
   public static void openBrowser(String dirType) {
-    // this is a runLater because otherwise it breaks idk why
-    Platform.runLater(() -> {
-      DirectoryChooser selDir = new DirectoryChooser();
+    JFileChooser selDir = new JFileChooser();
+    selDir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    selDir.setAcceptAllFileFilterUsed(false); // disable the "All files" option.
+    selDir.setApproveButtonToolTipText("Select the current folder");
 
+    if (isInput(dirType)) {
+      selDir.setDialogTitle("Select Minecraft Directory");
+
+      File inputDir = new File(inputDirText.getText());
+      if (inputDir.isDirectory()) selDir.setCurrentDirectory(inputDir);
+    } else {
+      selDir.setDialogTitle("Select Output Directory");
+
+      File outputDir = new File(outputDirText.getText());
+      if (outputDir.isDirectory()) selDir.setCurrentDirectory(outputDir);
+    }
+
+    int result = selDir.showDialog(window, "Select Folder");
+
+    if (result == JFileChooser.APPROVE_OPTION) {
       if (isInput(dirType)) {
-        selDir.setTitle("Select Minecraft Directory");
-
-        File inputDir = new File(inputDirText.getText());
-
-        if (inputDir.isDirectory()) selDir.setInitialDirectory(inputDir);
+        inputDirText.setText(selDir.getSelectedFile().getAbsolutePath());
       } else {
-        selDir.setTitle("Select Output Directory");
-
-        File outputDir = new File(outputDirText.getText());
-
-        if (outputDir.isDirectory()) selDir.setInitialDirectory(outputDir);
+        outputDirText.setText(selDir.getSelectedFile().getAbsolutePath());
       }
 
-      // cheap way to ensure the user cant mess with anything while the folder browser is open
-      windowWrapper.setEnabled(false);
-      File result = selDir.showDialog(null);
-      windowWrapper.setEnabled(true);
-      //window.toFront();
-
-      if (result != null) {
-        if (isInput(dirType)) {
-          inputDirText.setText(result.getAbsolutePath());
-        } else {
-          outputDirText.setText(result.getAbsolutePath());
-        }
-
-        validateInputs();
-      }
-    });
+      validateInputs();
+    }
   }
 
   private static String getMinecraftDir() {
@@ -143,6 +136,29 @@ public class Ui {
     outputDirTextMemory = outputDirText.getText();
   }
 
+  public static class VersionItem {
+    private String label;
+    private File file;
+
+    public VersionItem(String label, File file) {
+      this.label = label;
+      this.file = file;
+    }
+
+    public String getLabel() {
+      return this.label;
+    }
+
+    public File getFile() {
+      return this.file;
+    }
+
+    @Override
+    public String toString() {
+      return label;
+    }
+  }
+
   public static void getIndexes() {
     versions.removeAllItems();
 
@@ -154,7 +170,8 @@ public class Ui {
 
     for (File index : indexFiles) {
       if (index.isFile() && index.getName().endsWith(".json")) {
-        versions.addItem(index.getName().split("\\.json", 0)[0]);
+        VersionItem ver = new VersionItem(index.getName(), index);
+        versions.addItem(ver);
       }
     }
   }
@@ -180,17 +197,13 @@ public class Ui {
     if (outputDir.isDirectory()) {
       outputDirText.setBackground(Color.white);
     } else {
-      disableStart = true;
-      outputDirText.setBackground(invalidCol);
+      outputDirText.setBackground(warnCol);
     }
 
     if (!indexesDir.isDirectory() || indexesDir.listFiles().length == 0) {
       inputDirText.setBackground(invalidCol);
       disableStart = true;
       disableVersions = true;
-
-      //String msg = "Could not find Minecraft assets in " + inputDirText.getText() + ".";
-      //JOptionPane.showMessageDialog(Ui.window, msg, "error", JOptionPane.ERROR_MESSAGE);
     } else {
       inputDirText.setBackground(Color.white);
     }
@@ -205,7 +218,9 @@ public class Ui {
   }
 
   public static void log(String message) {
-    String timestamp = "[" + LocalTime.now().truncatedTo(ChronoUnit.SECONDS) + "] ";
+    DateTimeFormatter tsFormat = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+
+    String timestamp = "[" + LocalTime.now().format(tsFormat) + "] ";
     String[] lines = message.split("[\\r\\n]");
     StringJoiner linesCorrected = new StringJoiner("\n" + " ".repeat(timestamp.length()));
 
@@ -213,6 +228,8 @@ public class Ui {
 
     consoleText.append(timestamp + linesCorrected + "\n");
     System.out.println(timestamp + linesCorrected);
+
+    consoleText.setCaretPosition(consoleText.getDocument().getLength());
   }
 
   public static boolean isInput(String dirType) {
@@ -228,9 +245,6 @@ public class Ui {
     URL resourceIcon = Ui.class.getClassLoader().getResource("img/icon.png");
 
     window.setIconImage(Toolkit.getDefaultToolkit().getImage(resourceIcon));
-
-    @SuppressWarnings("unused")
-    JFXPanel initJavaFX = new JFXPanel(); // initialize javaFX so we can use native file browser
   }
 
   private static void setContextMenu() {
@@ -307,9 +321,25 @@ public class Ui {
     outputDirPanel.setLayout(new BoxLayout(outputDirPanel, BoxLayout.LINE_AXIS));
     outputDirPanel.setMaximumSize(new Dimension(580, 400));
     JLabel outputDirLabel = new JLabel("Output Directory", SwingConstants.RIGHT);
+    JLabel outputInfo = new JLabel("<HTML><U>(?)</U></HTML>");
     outputDirText.setComponentPopupMenu(rc_edit);
+    outputDirText.setPreferredSize(new Dimension(500, outputDirText.getPreferredSize().height));
     outputDirSelect.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     outputDirSelect.setFocusPainted(false);
+
+    String[] outputInfoText = {
+            "<HTML><p width=\"300\">",
+            "Note that, for the sake of avoiding a huge mess,",
+            "this will create an additional folder called <b>\"extracted\"</b>",
+            "in the chosen directory to put the extracted files in.",
+            "<br>",
+            "<br>",
+            "The full directory path will also be automatically created,",
+            "if it does not exist.",
+            "</span></HTML>"
+    };
+
+    outputInfo.setToolTipText(String.join(" ", outputInfoText));
 
     outputDirText.addFocusListener(new FocusListener() {
       @Override
@@ -334,6 +364,8 @@ public class Ui {
     outputDirSelect.addActionListener(e -> openBrowser("output"));
 
     outputDirPanel.add(outputDirLabel);
+    outputDirPanel.add(Box.createRigidArea(new Dimension(5,0)));
+    outputDirPanel.add(outputInfo);
     outputDirPanel.add(Box.createRigidArea(new Dimension(10,0)));
     outputDirPanel.add(outputDirText);
     outputDirPanel.add(Box.createRigidArea(new Dimension(10,0)));
@@ -377,7 +409,7 @@ public class Ui {
     selectVer.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
     selectVer.setMaximumSize(new Dimension(300, 400));
 
-    JLabel selectVerLabel = new JLabel("Minecraft Version", SwingConstants.RIGHT);
+    JLabel selectVerLabel = new JLabel("Minecraft Index", SwingConstants.RIGHT);
 
     versions.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     DefaultListCellRenderer rlist = new DefaultListCellRenderer();
@@ -434,6 +466,7 @@ public class Ui {
 
     JEditorPane aboutTextPanel = new JEditorPane("text/html", String.join("\n<br>", aboutText));
 
+    aboutTextPanel.setHighlighter(null);
     aboutTextPanel.setEditable(false);
     aboutTextPanel.setBackground(copyStyle.getBackground());
     aboutTextPanel.addHyperlinkListener(e -> {
@@ -446,9 +479,12 @@ public class Ui {
       }
     });
 
-    about.addActionListener(e -> {
-      JOptionPane.showMessageDialog(Ui.window, aboutTextPanel, "About", JOptionPane.INFORMATION_MESSAGE, jackIcon);
-    });
+    about.addActionListener(e -> JOptionPane.showMessageDialog(
+            Ui.window,
+            aboutTextPanel,
+            "About",
+            JOptionPane.INFORMATION_MESSAGE, jackIcon)
+    );
 
     start.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     start.setFocusPainted(false);
@@ -474,6 +510,9 @@ public class Ui {
     JPanel console = setConsolePanel();
     JPanel controls = setControlPanel();
 
+    ToolTipManager.sharedInstance().setInitialDelay(100);
+    ToolTipManager.sharedInstance().setDismissDelay(1234567890);
+
     getDefaultDirs();
     validateInputs();
 
@@ -482,7 +521,15 @@ public class Ui {
     windowWrapper.add(controls, BorderLayout.SOUTH);
 
     window.getContentPane().add(windowWrapper);
-
     window.setVisible(true);
+
+    // brings window to focus
+    int state = window.getExtendedState();
+    state &= ~JFrame.ICONIFIED;
+    window.setExtendedState(state);
+    window.setAlwaysOnTop(true);
+    window.toFront();
+    window.requestFocus();
+    window.setAlwaysOnTop(false);
   }
 }
