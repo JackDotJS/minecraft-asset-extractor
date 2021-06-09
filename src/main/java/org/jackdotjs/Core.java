@@ -1,9 +1,20 @@
 package org.jackdotjs;
 
+import mdlaf.MaterialLookAndFeel;
+import mdlaf.themes.MaterialLiteTheme;
+
+import javax.swing.*;
+
 public class Core {
-  public static final String appVersion = "1.0.0-TB4";
+  public static final String appVersion = "1.0.0-TB5";
 
   public static void main(String[] args) {
+    try {
+      UIManager.setLookAndFeel(new MaterialLookAndFeel(new MaterialLiteTheme()));
+    } catch (UnsupportedLookAndFeelException e) {
+      // handle exception
+    }
+
     Ui.init();
 
     String[] debugInfo = {
