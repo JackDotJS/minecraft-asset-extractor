@@ -1,7 +1,7 @@
 package org.jackdotjs;
 
 public class Core {
-  public static final String appVersion = "0.1.0";
+  public static final String appVersion = "0.1.1";
 
   public static void main(String[] args) {
     Ui.init();

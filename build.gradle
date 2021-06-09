@@ -13,7 +13,7 @@ dependencies {
 }
 
 javafx {
-    version = "16"
+    version = "11.0.2"
     modules = [ 'javafx.graphics', 'javafx.swing' ]
 }
 
