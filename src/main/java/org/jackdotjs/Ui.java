@@ -14,28 +14,50 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class Ui {
-  public static JFrame window = new JFrame("Jack's MCAsset Extractor");
-  public static JTextField inputDirText = new JTextField();
-  public static JTextField outputDirText = new JTextField();
-  public static JButton inputDirSelect = new JButton("...");
-  public static JButton outputDirSelect = new JButton("...");
-  public static JComboBox<VersionItem> versions = new JComboBox<>();
-  public static JButton start = new JButton("Start");
+  public static final JTextField inputDirText = new JTextField();
+  public static final JTextField outputDirText = new JTextField();
+  public static final JComboBox<VersionItem> versions = new JComboBox<>();
 
   private static String inputDirTextMemory;
   private static String outputDirTextMemory;
   private static File indexesDir;
 
-  private static final Color invalidCol = new Color(255, 190, 190);
-  private static final Color warnCol = new Color(190, 190, 255);
+  private static final JFrame window = new JFrame();
   private static final JPanel windowWrapper = new JPanel(new BorderLayout());
+  private static final JButton inputDirSelect = new JButton("...");
+  private static final JButton outputDirSelect = new JButton("...");
+  private static final JButton start = new JButton("Start");
   private static final JTextArea consoleText = new JTextArea();
   private static final JPopupMenu rc_edit = new JPopupMenu();
   private static final JPopupMenu rc_noedit = new JPopupMenu();
+  private static final Color invalidCol = new Color(255, 190, 190);
+  private static final Color warnCol = new Color(225, 225, 255);
+
+  public static final class VersionItem {
+    private String label;
+    private File file;
+
+    public VersionItem(String label, File file) {
+      this.label = label;
+      this.file = file;
+    }
+
+    public String getLabel() {
+      return this.label;
+    }
+
+    public File getFile() {
+      return this.file;
+    }
+
+    @Override
+    public String toString() {
+      return label;
+    }
+  }
 
   public static void forceEnable() {
     inputDirText.setEnabled(true);
@@ -57,7 +79,25 @@ public class Ui {
     start.setEnabled(false);
   }
 
-  public static void openBrowser(String dirType) {
+  public static void log(String message) {
+    DateTimeFormatter tsFormat = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+
+    String timestamp = "[" + LocalTime.now().format(tsFormat) + "] ";
+    String[] lines = message.split("[\\r\\n]");
+
+    String space = " ";
+
+    StringJoiner linesCorrected = new StringJoiner("\n" + String.join("", Collections.nCopies(timestamp.length(), space)));
+
+    for (String l:lines) linesCorrected.add(l);
+
+    consoleText.append(timestamp + linesCorrected + "\n");
+    System.out.println(timestamp + linesCorrected);
+
+    consoleText.setCaretPosition(consoleText.getDocument().getLength());
+  }
+
+  private static void openBrowser(String dirType) {
     JFileChooser selDir = new JFileChooser();
     selDir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     selDir.setAcceptAllFileFilterUsed(false); // disable the "All files" option.
@@ -115,7 +155,7 @@ public class Ui {
     return String.join(File.separator, dirStrings);
   }
 
-  public static void getDefaultDirs() {
+  private static void getDefaultDirs() {
     String newDir = getMinecraftDir();
 
     File newDirFile = new File(newDir);
@@ -136,30 +176,7 @@ public class Ui {
     outputDirTextMemory = outputDirText.getText();
   }
 
-  public static class VersionItem {
-    private String label;
-    private File file;
-
-    public VersionItem(String label, File file) {
-      this.label = label;
-      this.file = file;
-    }
-
-    public String getLabel() {
-      return this.label;
-    }
-
-    public File getFile() {
-      return this.file;
-    }
-
-    @Override
-    public String toString() {
-      return label;
-    }
-  }
-
-  public static void getIndexes() {
+  private static void getIndexes() {
     versions.removeAllItems();
 
     File[] indexFiles = indexesDir.listFiles();
@@ -176,7 +193,7 @@ public class Ui {
     }
   }
 
-  public static void validateInputs() {
+  private static void validateInputs() {
     File inputDir = new File(inputDirText.getText());
     File outputDir = new File(outputDirText.getText());
 
@@ -217,26 +234,12 @@ public class Ui {
     if (!disableVersions) getIndexes();
   }
 
-  public static void log(String message) {
-    DateTimeFormatter tsFormat = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
-
-    String timestamp = "[" + LocalTime.now().format(tsFormat) + "] ";
-    String[] lines = message.split("[\\r\\n]");
-    StringJoiner linesCorrected = new StringJoiner("\n" + " ".repeat(timestamp.length()));
-
-    for (String l:lines) linesCorrected.add(l);
-
-    consoleText.append(timestamp + linesCorrected + "\n");
-    System.out.println(timestamp + linesCorrected);
-
-    consoleText.setCaretPosition(consoleText.getDocument().getLength());
-  }
-
-  public static boolean isInput(String dirType) {
+  private static boolean isInput(String dirType) {
     return dirType.equalsIgnoreCase("input");
   }
 
   private static void setWindow() {
+    window.setTitle("Jack's MCAsset Extractor");
     window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     window.setLocationRelativeTo(null);
     window.setSize(600, 450);
@@ -329,9 +332,9 @@ public class Ui {
 
     String[] outputInfoText = {
             "<HTML><p width=\"300\">",
-            "Note that, for the sake of avoiding a huge mess,",
-            "this will create an additional folder called <b>\"extracted\"</b>",
-            "in the chosen directory to put the extracted files in.",
+            "Note that, for the sake of avoiding a huge mess, all extracted",
+            "files will be placed in an additional folder called <b>\"extracted\"</b>",
+            "within the chosen directory.",
             "<br>",
             "<br>",
             "The full directory path will also be automatically created,",
@@ -400,10 +403,12 @@ public class Ui {
   }
 
   private static JPanel setControlPanel() {
+    // control panel wrapper
     JPanel controls = new JPanel();
     controls.setLayout(new BoxLayout(controls, BoxLayout.PAGE_AXIS));
     controls.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
+    // create version selector
     JPanel selectVer = new JPanel();
     selectVer.setLayout(new BoxLayout(selectVer, BoxLayout.LINE_AXIS));
     selectVer.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
@@ -420,9 +425,11 @@ public class Ui {
     selectVer.add(Box.createRigidArea(new Dimension(10,0)));
     selectVer.add(versions);
 
+    // create button row
     Box bRow = Box.createHorizontalBox();
     bRow.setMaximumSize(new Dimension(560, 400));
 
+    // create about menu
     JButton about = new JButton("About");
     about.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     about.setFocusPainted(false);
@@ -439,29 +446,27 @@ public class Ui {
     int fontColB = copyStyle.getForeground().getBlue();
 
     String[] style = {
-            "font-family:" + aboutFont.getFamily() + ";",
-            "font-weight:" + ((aboutFont.isBold()) ? "bold" : "normal") + ";",
-            "font-size:" + aboutFont.getSize() + "pt;",
-            "color:rgb(" + fontColR + "," + fontColG + "," + fontColB + ");",
-            "user-select: none"
+      "font-family:" + aboutFont.getFamily() + ";",
+      "font-weight:" + ((aboutFont.isBold()) ? "bold" : "normal") + ";",
+      "font-size:" + aboutFont.getSize() + "pt;",
+      "color:rgb(" + fontColR + "," + fontColG + "," + fontColB + ");",
+      "user-select: none"
     };
 
-    System.out.println();
-
     String[] aboutText = {
-            "<html><body style=\"" + String.join("", style) + "\">",
-            "<h1 style=\"margin: 0\">Jack's MCAsset Extractor</h1>",
-            "Version " + Core.appVersion,
-            "",
-            "i made dis C:",
-            "",
-            "You can find this project on GitHub:",
-            "<a href=\"https://github.com/JackDotJS/jacks-mcasset-extractor\">https://github.com/JackDotJS/jacks-mcasset-extractor</a>",
-            "",
-            "Special thanks to <a href=\"https://github.com/TropheusJ\">Tropheus Jay</a> for helping me",
-            "navigate this nightmarish programming language &lt;3",
-            "",
-            "</body></html>"
+      "<html><body style=\"" + String.join("", style) + "\">",
+      "<h1 style=\"margin: 0\">Jack's MCAsset Extractor</h1>",
+      "Version " + Core.appVersion,
+      "",
+      "i made dis C:",
+      "",
+      "You can find this project on GitHub:",
+      "<a href=\"https://github.com/JackDotJS/jacks-mcasset-extractor\">https://github.com/JackDotJS/jacks-mcasset-extractor</a>",
+      "",
+      "Special thanks to <a href=\"https://github.com/TropheusJ\">Tropheus Jay</a> for helping me",
+      "navigate this nightmarish programming language &lt;3",
+      "",
+      "</body></html>"
     };
 
     JEditorPane aboutTextPanel = new JEditorPane("text/html", String.join("\n<br>", aboutText));
@@ -480,19 +485,74 @@ public class Ui {
     });
 
     about.addActionListener(e -> JOptionPane.showMessageDialog(
-            Ui.window,
-            aboutTextPanel,
-            "About",
-            JOptionPane.INFORMATION_MESSAGE, jackIcon)
+      Ui.window,
+      aboutTextPanel,
+      "About",
+      JOptionPane.INFORMATION_MESSAGE, jackIcon)
     );
 
+    // create options menu
+
+    JButton options = new JButton("Options");
+    options.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    options.setFocusPainted(false);
+    options.setPreferredSize(new Dimension(100, options.getPreferredSize().height));
+
+    JPanel optionsPanel = new JPanel();
+    optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+
+    Box optRow1 = Box.createHorizontalBox();
+    JLabel optOverrideLabel = new JLabel("Overwrite Existing Files");
+    JLabel optOverrideInfo = new JLabel("<HTML><U>(?)</U></HTML>");
+    optOverrideInfo.setToolTipText(String.join(" ", new String[] {
+      "<html><p width=\"300\">",
+      "Forces extracted files to overwrite any existing",
+      "file with the same name in the chosen directory.",
+      "</p></html>"
+    }));
+    JCheckBox optOverrideCtrl = new JCheckBox();
+    optOverrideCtrl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    optOverrideCtrl.addActionListener(e -> Core.overwriteFiles = optOverrideCtrl.isSelected());
+
+    optRow1.add(optOverrideLabel);
+    optRow1.add(Box.createRigidArea(new Dimension(5,5)));
+    optRow1.add(optOverrideInfo);
+    optRow1.add(Box.createHorizontalGlue());
+    optRow1.add(optOverrideCtrl);
+
+    Box optMsgRow = Box.createHorizontalBox();
+    JLabel optMsg = new JLabel("More options coming soon!");
+    optMsg.setForeground(Color.gray);
+
+    optMsgRow.add(optMsg);
+
+    optionsPanel.add(optMsgRow);
+    optionsPanel.add(Box.createRigidArea(new Dimension(10,10)));
+    optionsPanel.add(optRow1);
+    optionsPanel.add(Box.createRigidArea(new Dimension(10,5)));
+
+    options.addActionListener(e -> JOptionPane.showMessageDialog(
+      Ui.window,
+      optionsPanel,
+      "Options",
+      JOptionPane.PLAIN_MESSAGE)
+    );
+
+    // set up start button
     start.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     start.setFocusPainted(false);
     start.setPreferredSize(new Dimension(100, start.getPreferredSize().height));
 
-    start.addActionListener(e -> Extractor.extract());
+    start.addActionListener(e -> {
+      Core.inputDirString = inputDirText.getText();
+      Core.outputDirString = outputDirText.getText();
+      Core.selectedIndex = (VersionItem) versions.getSelectedItem();
 
+      Extractor.extract();
+    });
 
+    bRow.add(options);
+    bRow.add(Box.createHorizontalGlue());
     bRow.add(about);
     bRow.add(Box.createHorizontalGlue());
     bRow.add(start);
@@ -511,7 +571,7 @@ public class Ui {
     JPanel controls = setControlPanel();
 
     ToolTipManager.sharedInstance().setInitialDelay(100);
-    ToolTipManager.sharedInstance().setDismissDelay(1234567890);
+    ToolTipManager.sharedInstance().setDismissDelay(1234567890); // a really long time
 
     getDefaultDirs();
     validateInputs();
@@ -523,10 +583,7 @@ public class Ui {
     window.getContentPane().add(windowWrapper);
     window.setVisible(true);
 
-    // brings window to focus
-    int state = window.getExtendedState();
-    state &= ~JFrame.ICONIFIED;
-    window.setExtendedState(state);
+    // brings window to front after opening
     window.setAlwaysOnTop(true);
     window.toFront();
     window.requestFocus();

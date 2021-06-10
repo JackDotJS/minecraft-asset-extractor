@@ -1,7 +1,13 @@
 package org.jackdotjs;
 
 public class Core {
-  public static final String appVersion = "1.0.0-TB4";
+  public static final String appVersion = "1.0.0-RC1";
+
+  // user options
+  public static String inputDirString;
+  public static String outputDirString;
+  public static boolean overwriteFiles = false;
+  public static Ui.VersionItem selectedIndex;
 
   public static void main(String[] args) {
     Ui.init();

@@ -14,3 +14,6 @@
 .idea/uiDesigner.xml
 .idea/gradle.xml
 .idea/libraries
+
+# just in case
+mcassets_extracted
