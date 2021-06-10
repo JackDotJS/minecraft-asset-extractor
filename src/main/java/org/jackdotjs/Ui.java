@@ -1,7 +1,5 @@
 package org.jackdotjs;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -15,6 +13,7 @@ import java.net.URL;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import com.formdev.flatlaf.util.SystemInfo;
 
 public class Ui {
   public static final JTextField inputDirText = new JTextField();
@@ -34,6 +33,7 @@ public class Ui {
   private static final JTextArea consoleText = new JTextArea();
   private static final JPopupMenu rc_edit = new JPopupMenu();
   private static final JPopupMenu rc_noedit = new JPopupMenu();
+  private static final Color defaultCol = new Color(new JTextField().getBackground().getRGB());
   private static final Color invalidCol = new Color(255, 190, 190);
   private static final Color warnCol = new Color(225, 225, 255);
 
@@ -69,7 +69,7 @@ public class Ui {
     options.setEnabled(true);
     start.setEnabled(true);
 
-    validateInputs(); // just to be sure
+    validateInputs(false); // just to be sure
   }
 
   public static void forceDisable() {
@@ -127,26 +127,26 @@ public class Ui {
         outputDirText.setText(selDir.getSelectedFile().getAbsolutePath());
       }
 
-      validateInputs();
+      validateInputs(null);
     }
   }
 
   private static String getMinecraftDir() {
     String[] dirStrings = new String[0];
 
-    if (SystemUtils.IS_OS_WINDOWS) {
+    if (SystemInfo.isWindows) {
       dirStrings = new String[] {
               System.getProperty("user.home"),
               "AppData",
               "Roaming",
               ".minecraft"
       };
-    } else if (SystemUtils.IS_OS_LINUX) {
+    } else if (SystemInfo.isLinux) {
       dirStrings = new String[] {
               System.getProperty("user.home"),
               ".minecraft"
       };
-    } else if (SystemUtils.IS_OS_MAC) {
+    } else if (SystemInfo.isMacOS) {
       dirStrings = new String[] {
               System.getProperty("user.home"),
               "Library",
@@ -186,8 +186,6 @@ public class Ui {
 
     assert indexFiles != null;
 
-    ArrayUtils.reverse(indexFiles);
-
     for (File index : indexFiles) {
       if (index.isFile() && index.getName().endsWith(".json")) {
         VersionItem ver = new VersionItem(index.getName(), index);
@@ -196,7 +194,11 @@ public class Ui {
     }
   }
 
-  private static void validateInputs() {
+  private static void validateInputs(Boolean getIndex) {
+    if (getIndex == null) {
+      getIndex = Boolean.TRUE;
+    }
+
     File inputDir = new File(inputDirText.getText());
     File outputDir = new File(outputDirText.getText());
 
@@ -207,7 +209,7 @@ public class Ui {
     boolean disableVersions = false;
 
     if (inputDir.isDirectory()) {
-      inputDirText.setBackground(Color.white);
+      inputDirText.setBackground(defaultCol);
     } else {
       disableStart = true;
       disableVersions = true;
@@ -215,7 +217,7 @@ public class Ui {
     }
 
     if (outputDir.isDirectory()) {
-      outputDirText.setBackground(Color.white);
+      outputDirText.setBackground(defaultCol);
     } else {
       outputDirText.setBackground(warnCol);
     }
@@ -225,7 +227,7 @@ public class Ui {
       disableStart = true;
       disableVersions = true;
     } else {
-      inputDirText.setBackground(Color.white);
+      inputDirText.setBackground(defaultCol);
     }
 
     versions.setEnabled(!disableVersions);
@@ -234,7 +236,7 @@ public class Ui {
     inputDirTextMemory = inputDirText.getText();
     outputDirTextMemory = outputDirText.getText();
 
-    if (!disableVersions) getIndexes();
+    if (!disableVersions && getIndex) getIndexes();
   }
 
   private static boolean isInput(String dirType) {
@@ -297,7 +299,7 @@ public class Ui {
       public void focusLost(FocusEvent e) {
         System.out.println("focus lost");
         if (!inputDirTextMemory.equals(inputDirText.getText())) {
-          validateInputs();
+          validateInputs(null);
           System.out.println("text changed");
         }
       }
@@ -305,7 +307,7 @@ public class Ui {
 
     inputDirText.addActionListener(e -> {
       System.out.println("action listener");
-      validateInputs();
+      validateInputs(null);
     });
 
     inputDirText.setBorder(BorderFactory.createCompoundBorder(
@@ -355,12 +357,12 @@ public class Ui {
       @Override
       public void focusLost(FocusEvent e) {
         if (!outputDirTextMemory.equals(outputDirText.getText())) {
-          validateInputs();
+          validateInputs(null);
         }
       }
     });
 
-    outputDirText.addActionListener(e -> validateInputs());
+    outputDirText.addActionListener(e -> validateInputs(null));
 
     outputDirText.setBorder(BorderFactory.createCompoundBorder(
             outputDirText.getBorder(),
@@ -578,7 +580,7 @@ public class Ui {
     ToolTipManager.sharedInstance().setDismissDelay(1234567890); // a really long time
 
     getDefaultDirs();
-    validateInputs();
+    validateInputs(null);
 
     windowWrapper.add(dirs, BorderLayout.NORTH);
     windowWrapper.add(console, BorderLayout.CENTER);

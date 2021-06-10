@@ -1,17 +1,23 @@
-import java.beans.JavaBean
-
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
+
+archivesBaseName = 'jmce'
+mainClassName = 'org.jackdotjs.Core'
+version='1.0.0-RC4'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    //implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+    implementation 'com.formdev:flatlaf:1.2'
 }
 
 jar {
@@ -20,11 +26,7 @@ jar {
     }
 }
 
-//shadowJar {
-//    minimize()
-//}
-
-mainClassName = 'org.jackdotjs.Core'
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+shadowJar {
+    archiveClassifier.set('')
+    //minimize()
+}
