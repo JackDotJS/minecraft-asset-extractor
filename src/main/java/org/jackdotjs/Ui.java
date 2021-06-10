@@ -30,6 +30,7 @@ public class Ui {
   private static final JButton inputDirSelect = new JButton("...");
   private static final JButton outputDirSelect = new JButton("...");
   private static final JButton start = new JButton("Start");
+  private static final JButton options = new JButton("Options");
   private static final JTextArea consoleText = new JTextArea();
   private static final JPopupMenu rc_edit = new JPopupMenu();
   private static final JPopupMenu rc_noedit = new JPopupMenu();
@@ -65,6 +66,7 @@ public class Ui {
     outputDirText.setEnabled(true);
     outputDirSelect.setEnabled(true);
     versions.setEnabled(true);
+    options.setEnabled(true);
     start.setEnabled(true);
 
     validateInputs(); // just to be sure
@@ -77,6 +79,7 @@ public class Ui {
     outputDirSelect.setEnabled(false);
     versions.setEnabled(false);
     start.setEnabled(false);
+    options.setEnabled(false);
   }
 
   public static void log(String message) {
@@ -491,9 +494,7 @@ public class Ui {
       JOptionPane.INFORMATION_MESSAGE, jackIcon)
     );
 
-    // create options menu
-
-    JButton options = new JButton("Options");
+    // set up options menu
     options.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     options.setFocusPainted(false);
     options.setPreferredSize(new Dimension(100, options.getPreferredSize().height));
