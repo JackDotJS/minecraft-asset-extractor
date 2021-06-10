@@ -10,6 +10,8 @@ A: [Right here](https://github.com/JackDotJS/jacks-mcasset-extractor/releases), 
 ### Q: what do i need to run it?
 A: Any version of Java 8 or newer. I personally recommend [AdoptOpenJDK](https://adoptopenjdk.net/).
 
+Additionally, this app will (should) run on all 3 of the major platforms: Windows, MacOS, and Linux.
+
 ### Q: what in the world do i need this for?
 A: This tool is mostly useful for Resource Pack developers, especially those looking to acquire Minecraft's default sound files. Other than that, uhhh idk lmao
 
