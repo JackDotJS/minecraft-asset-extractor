@@ -466,9 +466,12 @@ public class Ui {
       "You can find this project on GitHub:",
       "<a href=\"https://github.com/JackDotJS/jacks-mcasset-extractor\">https://github.com/JackDotJS/jacks-mcasset-extractor</a>",
       "",
-      "Special thanks to <a href=\"https://github.com/TropheusJ\">Tropheus Jay</a> for helping me",
-      "navigate this nightmarish programming language &lt;3",
+      "<h2 style=\"margin: 0\">Special Thanks</h2>",
+      "<a href=\"https://github.com/TropheusJ\">Tropheus Jay</a> for helping me navigate",
+      "this nightmarish programming language &lt;3",
       "",
+      "<a href=\"https://github.com/HiItsDevin\">Devin</a> for helping me test this",
+      "app on Linux and MacOS &lt;3",
       "</body></html>"
     };
 

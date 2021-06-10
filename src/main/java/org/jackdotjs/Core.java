@@ -1,7 +1,7 @@
 package org.jackdotjs;
 
 public class Core {
-  public static final String appVersion = "1.0.0-RC2";
+  public static final String appVersion = "1.0.0-RC3";
 
   // user options
   public static String inputDirString;
