@@ -1,5 +1,8 @@
-# Jack's MCAsset Extractor
-A dead-simple desktop application for extracting Minecraft's built-in assets.
+<div align="center">
+  <img src="https://raw.githubusercontent.com/JackDotJS/jacks-mcasset-extractor/main/src/main/resources/img/icon.png"></img>
+  <h1>Jack's MCAsset Extractor</h1>
+  <h3>A dead-simple desktop application for extracting Minecraft's built-in assets.</h3>
+</div>
 
 ### Q: what the heck is this?
 A: This is a desktop application that simplifies the extraction of Minecraft's built-in assets. This includes things like textures, sounds, and more. Currently, this only includes the "hashed" assets you'll find in `./minecraft/assets/objects`, but I plan to add the ability to extract the assets included in Minecraft's .jar files in a later version. https://github.com/JackDotJS/jacks-mcasset-extractor/issues/3
