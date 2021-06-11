@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Core {
-  public static final String appVersion = "1.0.0-RC4";
+  public static final String appVersion = "1.0.0";
 
   // user options
   public static String inputDirString;
