@@ -46,11 +46,9 @@ public class Core {
       "App Version: " + appVersion,
       " ",
       "Java Version: " + System.getProperty("java.version"),
-      "Java Vendor: " + System.getProperty("java.vendor"),
-      "Java Vendor URL: " + System.getProperty("java.vendor.url"),
+      "Java Vendor: " + System.getProperty("java.vendor") + " (" + System.getProperty("java.vendor.url") + ")",
       " ",
-      "OS Name: " + System.getProperty("os.name"),
-      "OS Version: " + System.getProperty("os.version"),
+      "OS Name: " + System.getProperty("os.name") + " (" + System.getProperty("os.version") + ")",
       "OS Architecture: " + System.getProperty("os.arch"),
       " "
     };
