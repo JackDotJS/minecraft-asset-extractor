@@ -28,13 +28,13 @@ Promise.all([
       // get build date
       const num = parseInt(text);
       if (isNaN(num)) return console.warn(`gha-build: ${num}`);
-      ghbuild = new Date(num * 1000).toUTCString();
+      ghbuild = new Date(num * 1000).toUTCString().trim();
 
       console.log(`got build date:`, ghbuild);
     } else {
       // get rev hash
-      ghrev = text;
-      console.log(`got revision hash:`, text);
+      ghrev = text.trim();
+      console.log(`got revision hash:`, ghrev);
     }
   }
 
