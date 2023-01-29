@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Minecraft Asset Extractor</title>
+
+  <!-- TODO: embed data -->
+
+  <!-- stylesheets -->
+
+  <link rel="stylesheet" href="src/stylesheets/global.css" />
+
+  <!-- scripts -->
+
+  <script type="module" src="src/index.ts"></script>
+</head>
+
+<body>
+  <main>
+    <noscript>
+      <h1>This app requires JavaScript to work. Please enable it in your browser settings.</h1>
+    </noscript>
+
+    <h1>Minecraft Asset Extractor</h1>
+
+    <div id="filezone">
+      <p> Drag and drop your .minecraft folder here. <br/> Or click browse: </p>
+      <input type="file" id="mcfolder" webkitdirectory/>
+    </div>
+
+    <pre><textarea id="output" readonly wrap="off"></textarea></pre>
+  </main>
+</body>
+
+</html>
