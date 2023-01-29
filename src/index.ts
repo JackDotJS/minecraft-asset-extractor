@@ -45,11 +45,11 @@ Promise.all([
 }).catch(console.warn);
 
 
-fileselect?.addEventListener(`input`, (e) => {
+fileselect?.addEventListener(`input`, () => {
   console.log(`input`)
 });
 
-fileselect?.addEventListener(`change`, (e) => {
+fileselect?.addEventListener(`change`, () => {
   if (!isInterface<HTMLInputElement>(fileselect, `files`)) return;
 
   const files = fileselect?.files;
