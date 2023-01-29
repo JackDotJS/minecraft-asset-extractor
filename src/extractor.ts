@@ -1,17 +1,9 @@
-interface opts {
-  outputElem: Element | null,
-  logContent: string
-}
-
-const opts: opts = {
-  outputElem: null,
-  logContent: ""
-}
+import memory from './memory';
 
 export function exlog(...content: any) {
   console.log(...content);
 
-  const output = opts.outputElem;
+  const output = memory.outputElem;
 
   if (output == null) return;
 
@@ -44,5 +36,9 @@ export function exlog(...content: any) {
 }
 
 export function initialize(outputElem: Element | null) {
-  if (outputElem != null) opts.outputElem = outputElem;
+  if (outputElem != null) memory.outputElem = outputElem;
+}
+
+export function extract() {
+
 }

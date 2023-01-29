@@ -1,9 +1,12 @@
-import { initialize, exlog } from './extractor'
-import isInterface from './util/is-interface'
+import { initialize, exlog, extract } from './extractor';
+import isInterface from './util/is-interface';
+import memory from './memory';
+import { normalize } from './file-processor';
 
 const output = document.querySelector(`#output`);
 const fileselect = document.querySelector(`#mcfolder`);
 const filedrop = document.querySelector(`#filezone`);
+const startbutton = document.querySelector(`#extract`);
 
 let ghbuild = "";
 let ghrev = "";
@@ -57,6 +60,7 @@ fileselect?.addEventListener(`change`, () => {
   if (files == null) return;
 
   exlog(`Loaded ${files.length} files.`);
+  normalize(files);
 });
 
 filedrop?.addEventListener(`dragenter`, (e) => {
@@ -84,9 +88,19 @@ filedrop?.addEventListener(`drop`, (e) => {
 
   if (!isInterface<DragEvent>(e, `dataTransfer`)) return;
 
-  console.log(e.dataTransfer)
+  const files = e.dataTransfer?.items;
 
-  if (e.dataTransfer?.items) {
-    console.log(e.dataTransfer.items);
-  }
+  if (files == null) return;
+
+  exlog(`Loaded ${files.length} files.`);
+  normalize(files);
 }, false);
+
+startbutton?.addEventListener(`click`, () => {
+  if (memory.files.length > 0) {
+    extract();
+  } else {
+    // TODO: it'd probably be better to disable the button altogether in this case
+    alert(`No files selected!`);
+  }
+});
