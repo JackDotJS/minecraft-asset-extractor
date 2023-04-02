@@ -47,9 +47,22 @@ Promise.all([
   ].join(`\n`));
 }).catch(console.warn);
 
-if (fileselect && isInterface<HTMLInputElement>(fileselect, `files`)) {
-  // force empty file selection on page load to prevent weirdness
-  fileselect.value = ``
+/**
+   * force reset file selection and extract buttons on page load to prevent weirdness
+   * 
+   * i probably could've just used autocomplete="off" on these two elements,
+   * but i've heard that doesn't work right on some browsers.
+   * 
+   * fun!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   */
+if (fileselect && startbutton) {
+  if (isInterface<HTMLInputElement>(fileselect, `files`)) {
+    fileselect.value = ``
+  }
+
+  if (isInterface<HTMLInputElement>(startbutton, `disabled`)) {
+    startbutton.disabled = true;
+  }
 }
 
 fileselect?.addEventListener(`input`, () => {
@@ -65,6 +78,9 @@ fileselect?.addEventListener(`change`, () => {
 
   exlog(`Loaded ${files.length} files.`);
   normalize(files);
+
+  if (!isInterface<HTMLInputElement>(startbutton, `disabled`)) return;
+  startbutton.disabled = false;
 });
 
 filedrop?.addEventListener(`dragenter`, (e) => {
@@ -98,6 +114,9 @@ filedrop?.addEventListener(`drop`, (e) => {
 
   exlog(`Loaded ${files.length} files.`);
   normalize(files);
+
+  if (!isInterface<HTMLInputElement>(startbutton, `disabled`)) return;
+  startbutton.disabled = false;
 }, false);
 
 startbutton?.addEventListener(`click`, () => {
