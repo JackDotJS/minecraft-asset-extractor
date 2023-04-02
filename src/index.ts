@@ -47,6 +47,10 @@ Promise.all([
   ].join(`\n`));
 }).catch(console.warn);
 
+if (fileselect && isInterface<HTMLInputElement>(fileselect, `files`)) {
+  // force empty file selection on page load to prevent weirdness
+  fileselect.value = ``
+}
 
 fileselect?.addEventListener(`input`, () => {
   console.log(`input`)
