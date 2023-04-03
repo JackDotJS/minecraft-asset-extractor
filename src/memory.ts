@@ -1,9 +1,7 @@
-import MAEDirectory from './classes/directory';
-
 interface MAEMemory {
   outputElem: Element | null,
   logContent: string,
-  files: Array<File | MAEDirectory>
+  files: Array<File>
 }
 
 const memory: MAEMemory = {

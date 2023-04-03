@@ -1,5 +1,3 @@
-// these will be used later
-// import Directory from './classes/directory';
 import { exlog } from './extractor';
 import memory from './memory';
 
