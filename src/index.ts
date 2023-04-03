@@ -76,7 +76,6 @@ fileselect?.addEventListener(`change`, () => {
 
   if (files == null) return;
 
-  exlog(`Loaded ${files.length} files.`);
   normalize(files);
 
   if (!isInterface<HTMLInputElement>(startbutton, `disabled`)) return;
@@ -112,7 +111,6 @@ filedrop?.addEventListener(`drop`, (e) => {
 
   if (files == null) return;
 
-  exlog(`Loaded ${files.length} files.`);
   normalize(files);
 
   if (!isInterface<HTMLInputElement>(startbutton, `disabled`)) return;
