@@ -13,6 +13,7 @@ export default defineConfig({
         "start_url": ".",
         "display": "standalone",
         "background_color": "#9E512F",
+        "theme_color": "#9E512F",
         "description": "A web app that aims to simplify the process of extracting Minecraft's built-in game assets, including things like textures, sounds, models, JSON data, and more. This app works entirely through your browser.",
         "icons": [
           {
