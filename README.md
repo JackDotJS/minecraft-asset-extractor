@@ -1,5 +1,5 @@
 <div>
-  <img align="left" src="https://raw.githubusercontent.com/JackDotJS/minecraft-asset-extractor/main/assets/icon512x.png"/>
+  <img align="left" width="120px" src="https://raw.githubusercontent.com/JackDotJS/minecraft-asset-extractor/main/assets/icon512x.png"/>
   <hr>
   <h3>
   
