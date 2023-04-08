@@ -69,7 +69,8 @@ function processFSHandle(entry: FileSystemHandle, currentPath?: string) {
   if (!currentPath) {
     currentPath = entry.name;
   } else {
-    currentPath = `${currentPath}\\${entry.name}`;
+    // TODO: we may need platform-specific path seperators
+    currentPath = `${currentPath}/${entry.name}`;
   }
 
   if (entry.kind == `file` && entry instanceof FileSystemFileHandle) {
@@ -170,4 +171,26 @@ export async function normalize(input: FileList | DataTransferItemList) {
   console.debug(memory.files);
 
   return memory.files
+}
+
+export function getFile(path: string) {
+  for (const file of memory.files) {
+    if (file.path == path) return file;
+  }
+
+  return null
+}
+
+export function getFilesInDirectory(path: string) {
+  if (path.endsWith(`\\`)) path = path.substring(path.length-1);
+
+  // TODO: we may need platform-specific path seperators
+  let pattern = new RegExp(`${path}/(?!.*/.*)`);
+  let found: MAEFile[] = [];
+
+  for (const file of memory.files) {
+    if (pattern.test(file.path)) found.push(file);
+  }
+
+  return found;
 }
