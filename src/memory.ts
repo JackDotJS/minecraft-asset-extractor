@@ -1,7 +1,9 @@
+import { MAEFile } from './file-processor'
+
 interface MAEMemory {
   outputElem: Element | null,
   logContent: string,
-  files: Array<File>
+  files: Array<MAEFile>
 }
 
 const memory: MAEMemory = {
@@ -10,4 +12,4 @@ const memory: MAEMemory = {
   files: []
 }
 
-export default memory;
+export default memory
