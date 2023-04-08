@@ -85,22 +85,16 @@ function processFSHandle(entry: FileSystemHandle, currentPath?: string) {
 }
 
 async function processFileHandle(entry: FileSystemFileHandle, currentPath: string) {
-  try {
-    let file = await entry.getFile();
+  let file = await entry.getFile();
 
-    let nFile: MAEFile = {
-      name: file.name,
-      data: file,
-      path: currentPath
-    }
-
-    memory.files.push(nFile);
-    return file;
+  let nFile: MAEFile = {
+    name: file.name,
+    data: file,
+    path: currentPath
   }
 
-  catch (e) {
-    console.error(e);
-  }
+  memory.files.push(nFile);
+  return file;
 }
 
 async function processDirectoryHandle(directory: FileSystemDirectoryHandle, currentPath: string) {
