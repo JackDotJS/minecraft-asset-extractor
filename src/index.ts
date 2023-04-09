@@ -62,7 +62,7 @@ async function fetchVersions(snapshots: boolean, historical: boolean) {
       option.tabIndex = 0;
       option.innerHTML = version.id;
       versionlist?.append(option);
-	  });
+    });
   })
 }
 
