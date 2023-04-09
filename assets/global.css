@@ -5,6 +5,10 @@
   --accent: #C66B39;
 }
 
+html {
+  background-color: var(--app-bg);
+}
+
 body {
   position: absolute;
   left: 0;
@@ -13,7 +17,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--app-bg);
 }
 
 main {
