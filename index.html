@@ -54,17 +54,81 @@
       <h1>This app requires JavaScript to work. Please enable it in your browser settings.</h1>
     </noscript>
 
-    <h1>Minecraft Asset Extractor</h1>
-    <h3>This app is very, very, VERY work in progress. Almost nothing works yet. You have been warned!!!</h3>
+    <header>
+      <div id="app-title">
+        <img src="assets/icon256x.png">
+        <h1>Minecraft Asset Extractor</h1>
+      </div>
+      
+      <h3 class="notice-banner yellow">This app is very, very, VERY work in progress. Almost nothing works yet. You have been warned!!!</h3>
+    </header>
 
-    <div id="filezone">
-      <p> Drag and drop your .minecraft folder here. <br/> Or click browse: </p>
-      <input type="file" id="mcfolder" webkitdirectory/>
-    </div>
+    <section id="extractor-options">
+      <div>
+        <h3>Select input source:</h3>
+
+        <div id="source-selector" class="optbox">
+
+          <input type="radio" id="tab-local" name="tab" autocomplete="off" checked>
+          <input type="radio" id="tab-mojang" name="tab" autocomplete="off">
+
+          <div id="tabs">
+            <label for="tab-local">Local Files</label>
+            <label for="tab-mojang">Mojang API</label>
+          </div>
+
+          <div id="source-local">
+            <div id="filezone">
+              <p> Drag and drop your .minecraft folder here. <br/> Or click browse: </p>
+              <input type="file" id="mcfolder" webkitdirectory/>
+            </div>
+          </div>
+
+          <div id="source-mojang"></div>
+        </div>
+      </div>
+
+      <div id="version-selector">
+        <h3>Select Minecraft version:</h3>
+
+        <div id="version-search-wrapper" class="optbox">
+          <span>🔍</span>
+          <input type="search" id="version-search" placeholder="Search..." autocomplete="off">
+        </div>
+
+        <ul id="version-list" class="optbox" tabindex="-1">
+          <li tabindex="0">1.19.2</li>
+          <li tabindex="0">1.19.1</li>
+          <li tabindex="0">1.19</li>
+          <li tabindex="0">1.blah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          <li tabindex="0">blahblah</li>
+          
+        </ul>
+      </div>
+    </section>
 
     <button id="extract" type="button" disabled>Extract</button>
 
-    <pre><textarea id="output" readonly wrap="off"></textarea></pre>
+    <pre id="output-wrapper"><textarea id="output" class="optbox" readonly wrap="off"></textarea></pre>
   </main>
 </body>
 
